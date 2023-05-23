@@ -1,2 +1,2 @@
 # STM32_IntelligentTrashBinSystem
- 基于STM32F103C8T6开发的智能垃圾桶系统
+ 基于STM32F103RCT6开发的智能垃圾桶系统
