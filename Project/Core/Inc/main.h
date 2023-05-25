@@ -57,6 +57,24 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define HCSR04_TRIG_1_Pin GPIO_PIN_12
+#define HCSR04_TRIG_1_GPIO_Port GPIOB
+#define HCSR04_ECHO_1_Pin GPIO_PIN_13
+#define HCSR04_ECHO_1_GPIO_Port GPIOB
+#define HCSR04_TRIG_2_Pin GPIO_PIN_14
+#define HCSR04_TRIG_2_GPIO_Port GPIOB
+#define HCSR04_ECHO_2_Pin GPIO_PIN_15
+#define HCSR04_ECHO_2_GPIO_Port GPIOB
+#define HCSR04_TRIG_3_Pin GPIO_PIN_6
+#define HCSR04_TRIG_3_GPIO_Port GPIOC
+#define HCSR04_ECHO_3_Pin GPIO_PIN_7
+#define HCSR04_ECHO_3_GPIO_Port GPIOC
+#define HCSR04_TRIG_4_Pin GPIO_PIN_8
+#define HCSR04_TRIG_4_GPIO_Port GPIOC
+#define HCSR04_ECHO_4_Pin GPIO_PIN_9
+#define HCSR04_ECHO_4_GPIO_Port GPIOC
+#define SYN6288_IO_Pin GPIO_PIN_8
+#define SYN6288_IO_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -25,7 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "oled.h"
+#include "hcsr04.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,7 +69,22 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	uint8_t x = 0;
+	uint8_t y = 0;
+	double distanceValue_1 = 0;
+	uint8_t distanceValue_1_Integer = 0;
+	uint8_t distanceValue_1_Decimal = 0;
+	double distanceValue_2 = 0;
+	uint8_t distanceValue_2_Integer = 0;
+	uint8_t distanceValue_2_Decimal = 0;
+	double distanceValue_3 = 0;
+	uint8_t distanceValue_3_Integer = 0;
+	uint8_t distanceValue_3_Decimal = 0;
+	double distanceValue_4 = 0;
+	uint8_t distanceValue_4_Integer = 0;
+	uint8_t distanceValue_4_Decimal = 0;
+	uint8_t rxBuffer[1] = {'0'};
+	uint8_t distanceLimitValue = 4;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -88,17 +105,163 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_I2C1_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
+	OLED_Init();
+	OLED_Clear();
+	OLED_ShowChinese(x + 16 * 0, y + 2 * 0, 0);
+	OLED_ShowChinese(x + 16 * 1, y + 2 * 0, 1);
+	OLED_ShowChinese(x + 16 * 2, y + 2 * 0, 2);
+	OLED_ShowChar(x + 16 * 3 + 8 * 0, y + 2 * 0, '1', 16);
+	OLED_ShowChar(x + 16 * 3 + 8 * 1, y + 2 * 0, ':', 16);
+	OLED_ShowChinese(x + 16 * 0, y + 2 * 1, 0);
+	OLED_ShowChinese(x + 16 * 1, y + 2 * 1, 1);
+	OLED_ShowChinese(x + 16 * 2, y + 2 * 1, 2);
+	OLED_ShowChar(x + 16 * 3 + 8 * 0, y + 2 * 1, '2', 16);
+	OLED_ShowChar(x + 16 * 3 + 8 * 1, y + 2 * 1, ':', 16);
+	OLED_ShowChinese(x + 16 * 0, y + 2 * 2, 0);
+	OLED_ShowChinese(x + 16 * 1, y + 2 * 2, 1);
+	OLED_ShowChinese(x + 16 * 2, y + 2 * 2, 2);
+	OLED_ShowChar(x + 16 * 3 + 8 * 0, y + 2 * 2, '3', 16);
+	OLED_ShowChar(x + 16 * 3 + 8 * 1, y + 2 * 2, ':', 16);
+	OLED_ShowChinese(x + 16 * 0, y + 2 * 3, 0);
+	OLED_ShowChinese(x + 16 * 1, y + 2 * 3, 1);
+	OLED_ShowChinese(x + 16 * 2, y + 2 * 3, 2);
+	OLED_ShowChar(x + 16 * 3 + 8 * 0, y + 2 * 3, '4', 16);
+	OLED_ShowChar(x + 16 * 3 + 8 * 1, y + 2 * 3, ':', 16);
+	
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
+	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 500);
+	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 500);
+	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 500);
+	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 500);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		HAL_UART_Receive_DMA(&huart1, rxBuffer, 1);
+		
+		distanceValue_1 = HCSR04_1_GetDistance_Repeatedly(5);
+		distanceValue_1_Integer = (int)distanceValue_1;
+		distanceValue_1_Decimal = 10 * (distanceValue_1 - distanceValue_1_Integer);
+		
+		OLED_ShowNum(x + 16 * 3 + 8 * 2, y + 2 * 0, distanceValue_1_Integer, 2, 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 4, y + 2 * 0, '.', 16);
+		OLED_ShowNum(x + 16 * 3 + 8 * 5, y + 2 * 0, distanceValue_1_Decimal, 1, 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 6, y + 2 * 0, 'c', 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 7, y + 2 * 0, 'm', 16);
+		
+		distanceValue_2 = HCSR04_2_GetDistance_Repeatedly(5);
+		distanceValue_2_Integer = (int)distanceValue_2;
+		distanceValue_2_Decimal = 10 * (distanceValue_2 - distanceValue_2_Integer);
+		
+		OLED_ShowNum(x + 16 * 3 + 8 * 2, y + 2 * 1, distanceValue_2_Integer, 2, 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 4, y + 2 * 1, '.', 16);
+		OLED_ShowNum(x + 16 * 3 + 8 * 5, y + 2 * 1, distanceValue_2_Decimal, 1, 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 6, y + 2 * 1, 'c', 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 7, y + 2 * 1, 'm', 16);
+		
+		distanceValue_3 = HCSR04_3_GetDistance_Repeatedly(5);
+		distanceValue_3_Integer = (int)distanceValue_3;
+		distanceValue_3_Decimal = 10 * (distanceValue_3 - distanceValue_3_Integer);
+		
+		OLED_ShowNum(x + 16 * 3 + 8 * 2, y + 2 * 2, distanceValue_3_Integer, 2, 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 4, y + 2 * 2, '.', 16);
+		OLED_ShowNum(x + 16 * 3 + 8 * 5, y + 2 * 2, distanceValue_3_Decimal, 1, 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 6, y + 2 * 2, 'c', 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 7, y + 2 * 2, 'm', 16);
+		
+		distanceValue_4 = HCSR04_4_GetDistance_Repeatedly(5);
+		distanceValue_4_Integer = (int)distanceValue_4;
+		distanceValue_4_Decimal = 10 * (distanceValue_4 - distanceValue_4_Integer);
+		
+		OLED_ShowNum(x + 16 * 3 + 8 * 2, y + 2 * 3, distanceValue_4_Integer, 2, 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 4, y + 2 * 3, '.', 16);
+		OLED_ShowNum(x + 16 * 3 + 8 * 5, y + 2 * 3, distanceValue_4_Decimal, 1, 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 6, y + 2 * 3, 'c', 16);
+		OLED_ShowChar(x + 16 * 3 + 8 * 7, y + 2 * 3, 'm', 16);
+		
+		switch(rxBuffer[0])
+		{
+			case '1':
+				printf("可回收垃圾\n");
+			break;
+			case '2':
+				printf("可回收垃圾\n");
+			break;
+			case '3':
+				printf("厨余垃圾\n");
+			break;
+			case '4':
+				printf("厨余垃圾\n");
+			break;
+			case '5':
+				printf("有害垃圾\n");
+			break;
+			case '6':
+				printf("有害垃圾\n");
+			break;
+			case '7':
+				printf("其他垃圾\n");
+			break;
+			case '8':
+				printf("其他垃圾\n");
+			break;
+			default:
+				;
+			break;
+		}
+		
+		if (distanceValue_1 > distanceLimitValue)
+		{
+			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, (int)2000 * 100 / 180);
+		}
+		else if (distanceValue_1 < distanceLimitValue)
+		{
+			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 500);
+			HAL_GPIO_WritePin(SYN6288_IO_GPIO_Port, SYN6288_IO_Pin, GPIO_PIN_SET);
+		}
+		
+		if (distanceValue_2 > distanceLimitValue)
+		{
+			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, (int)2000 * 100 / 180);
+		}
+		else if (distanceValue_2 < distanceLimitValue)
+		{
+			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 500);
+			HAL_GPIO_WritePin(SYN6288_IO_GPIO_Port, SYN6288_IO_Pin, GPIO_PIN_SET);
+		}
+		
+		if (distanceValue_3 > distanceLimitValue)
+		{
+			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, (int)2000 * 100 / 180);
+		}
+		else if (distanceValue_3 < distanceLimitValue)
+		{
+			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 500);
+			HAL_GPIO_WritePin(SYN6288_IO_GPIO_Port, SYN6288_IO_Pin, GPIO_PIN_SET);
+		}
+		
+		if (distanceValue_4 > distanceLimitValue)
+		{
+			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, (int)2000 * 100 / 180);
+		}
+		else if (distanceValue_4 < distanceLimitValue)
+		{
+			__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 500);
+			HAL_GPIO_WritePin(SYN6288_IO_GPIO_Port, SYN6288_IO_Pin, GPIO_PIN_SET);
+		}
+		
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
